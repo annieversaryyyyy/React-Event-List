@@ -1,25 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import {Redirect, Route, Switch} from "react-router-dom";
+import {useSelector} from "react-redux";
 
-function App() {
+// Containers
+import Login from "./containers/Login/Login";
+import Register from "./containers/Register/Register";
+import Dashboard from "./containers/Dashboard/Dashboard";
+import ShareCalendar from "./containers/ShareCalendar/ShareCalendar";
+import Collaborators from "./containers/Collaborators/Collaborators";
+
+// Components
+import Layout from "./components/UI/Layout/Layout";
+
+const ProtectedRoute = ({isAllowed, redirectTo, ...props}) => {
+  return isAllowed ?
+    <Route {...props}/> :
+    <Redirect to={redirectTo}/>
+};
+
+const App = () => {
+  const user = useSelector(state => state.users.user);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout>
+      <Switch>
+        <ProtectedRoute
+          isAllowed={!user}
+          redirectTo="/"
+          path="/login"
+          component={Login}
+        />
+        <ProtectedRoute
+          isAllowed={!user}
+          redirectTo="/"
+          path="/register"
+          component={Register}
+        />
+        <ProtectedRoute
+          exact
+          isAllowed={user}
+          redirectTo="/login"
+          path="/"
+          component={Dashboard}
+        />
+        <ProtectedRoute
+          isAllowed={user}
+          redirectTo="/login"
+          path="/share-calendar"
+          component={ShareCalendar}
+        />
+        <ProtectedRoute
+          isAllowed={user}
+          redirectTo="/login"
+          path="/collaborators"
+          component={Collaborators}
+        />
+      </Switch>
+    </Layout>
   );
 }
 
