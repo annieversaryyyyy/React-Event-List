@@ -7,12 +7,14 @@ const app = express();
 const port = 8000;
 
 const users = require('./app/users');
+const events = require('./app/events');
 
 app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
 
 app.use('/users', users);
+app.use('/events', events);
 
 const run = async () => {
     await mongoose.connect(config.mongo.db, config.mongo.options);

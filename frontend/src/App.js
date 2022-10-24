@@ -10,6 +10,7 @@ import Collaborators from "./containers/Collaborators/Collaborators";
 
 // Components
 import Layout from "./components/UI/Layout/Layout";
+import NewEvent from "./containers/NewEvent/NewEvent";
 
 const ProtectedRoute = ({isAllowed, redirectTo, ...props}) => {
   return isAllowed ?
@@ -53,6 +54,12 @@ const App = () => {
           redirectTo="/login"
           path="/collaborators"
           component={Collaborators}
+        />
+        <ProtectedRoute
+            isAllowed={user}
+            redirectTo="/login"
+            path="/new-event"
+            component={NewEvent}
         />
       </Switch>
     </Layout>
