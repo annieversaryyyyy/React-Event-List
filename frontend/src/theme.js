@@ -1,4 +1,5 @@
 import {createTheme} from "@mui/material";
+import {purple} from "@mui/material/colors";
 
 const theme = createTheme({
   components: {
@@ -7,7 +8,12 @@ const theme = createTheme({
         variant: 'outlined',
         fullWidth: true,
       }
-    }
+    },
+  },
+  palette: {
+    primary: {
+      main: '#da2b40',
+    },
   },
 });
 

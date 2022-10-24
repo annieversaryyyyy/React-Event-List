@@ -1,0 +1,36 @@
+
+.links{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 55px;
+    margin-bottom: 50px;
+}
+.links a{
+    padding: 10px 8px;
+    background: #dd4659;
+    text-decoration: none;
+    color: white;
+    border-radius: 5px;
+    border: 2px transparent solid;
+    transition: all .4s ease;
+}
+
+.links a:hover{
+    background: none;
+    color: #dd4659;
+    border-color: #dd4659;
+}
+
+.card{
+    background: #ffffff;
+    padding-left: 20px;
+    border: 2px solid #ea7e7e;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+ul{
+    list-style-position: inside;
+}
