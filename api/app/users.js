@@ -128,7 +128,7 @@ router.put('/share', auth, async (req, res) => {
     const collaborator = await User.findOne({email: userEmail});
 
     if (!collaborator) {
-      return res.status(401).send({
+      return res.status(404).send({
         email: 'User was not found!'
       });
     }
@@ -141,13 +141,13 @@ router.put('/share', auth, async (req, res) => {
 
     const userData = {
       collaborators: [collaborator._id]
-    }
+    };
 
     if (req.user.collaborators && req.user.collaborators.length) {
       userData.collaborators = [...userData.collaborators, ...req.user.collaborators]
     }
 
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, userData, { new: true })
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, userData, { new: true });
 
     return res.send(updatedUser);
   } catch(e) {
@@ -156,20 +156,15 @@ router.put('/share', auth, async (req, res) => {
   }
 });
 
-
 router.put('/unshare', auth, async (req, res) => {
   try {
-    const collaborator = await User.findOne({ _id: req.body.collaboratorId });
+    const userData = {
+      collaborators: req.user.collaborators.filter(itemId => itemId.valueOf() !== req.body.collaboratorId)
+    };
 
-    if (!collaborator) {
-      res.status(404).send({message: 'Collaborator not found!'});
-    }
+    const updatedUser = await User.findByIdAndUpdate(req.user._id,userData,{new: true});
 
-    const updatedCollaborator = await User.findByIdAndUpdate(req.body.collaboratorId, {
-      collaborators: collaborator.collaborators.sort(item => item !== req.user._id)
-    }, {new: true});
-
-    return res.send(updatedCollaborator);
+    return res.send(updatedUser);
   } catch(e) {
     console.error(e);
     res.sendStatus(500).send(e);

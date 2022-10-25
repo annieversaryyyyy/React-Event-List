@@ -111,6 +111,7 @@ export function* removeCollaboratorSaga({payload: collaboratorId}) {
   try {
     const response = yield axiosApi.put('/users/unshare', {collaboratorId});
     yield put(removeCollaboratorSuccess(response.data));
+    yield put(fetchCollaboratorsRequest());
     yield put(addNotification('Calendar has been unshared for this user!', 'success'));
   } catch (e) {
     console.error(e);

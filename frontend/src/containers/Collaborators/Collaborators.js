@@ -12,7 +12,6 @@ import Spinner from "../../components/Spinner/Spinner";
 const Collaborators = () => {
   const dispatch = useDispatch();
   const collaborators = useSelector(state => state.users.collaborators);
-  const fetchCollaboratorsError = useSelector(state => state.users.fetchCollaboratorsError);
   const fetchCollaboratorsLoading = useSelector(state => state.users.fetchCollaboratorsLoading);
 
   useEffect(() => {
