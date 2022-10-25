@@ -24,7 +24,7 @@ const useStyles = makeStyles()(theme => ({
 const AppToolbar = () => {
   const { classes } = useStyles();
   const user = useSelector(state => state.users.user);
-  console.log(user);
+
   return (
     <>
      <AppBar position="fixed">
