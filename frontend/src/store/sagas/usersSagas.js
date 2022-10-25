@@ -10,10 +10,18 @@ import {
   loginRequest,
   loginSuccess,
   loginFailure,
-  logoutRequest, facebookLoginRequest
+  logoutRequest,
+  facebookLoginRequest,
+  fetchCollaboratorsSuccess,
+  addCollaboratorSuccess,
+  addCollaboratorFailure,
+  fetchCollaboratorsFailure,
+  removeCollaboratorSuccess,
+  removeCollaboratorFailure,
+  fetchCollaboratorsRequest,
+  addCollaboratorRequest, removeCollaboratorRequest
 } from "../actions/usersActions";
 
-// Ohter
 import axiosApi from "../../axiosApi";
 
 export function* registerUserSaga({payload: userData}) {
@@ -74,11 +82,52 @@ export function* facebookLoginSaga({payload: data}) {
   }
 }
 
+
+export function* fetchCollaboratorsSaga() {
+  try {
+    const response = yield axiosApi.get('/users/collaborators');
+    yield put(fetchCollaboratorsSuccess(response.data));
+  } catch (e) {
+    console.error(e);
+    yield put(fetchCollaboratorsFailure(e.response.data));
+    yield put(addNotification('Something went wrong while fetching collaborators!', 'error'));
+  }
+}
+
+export function* addCollaboratorSaga({payload: userEmail}) {
+  try {
+    const response = yield axiosApi.put('/users/share', {userEmail});
+    yield put(addCollaboratorSuccess(response.data));
+    yield put(addNotification('Calendar has been shared for this user!', 'success'));
+    yield put(historyPush('/collaborators'));
+  } catch (e) {
+    console.error(e);
+    yield put(addNotification('Something went wrong while sharing calendar!', 'error'));
+    yield put(addCollaboratorFailure(e.response.data));
+  }
+}
+
+export function* removeCollaboratorSaga({payload: collaboratorId}) {
+  try {
+    const response = yield axiosApi.put('/users/unshare', {collaboratorId});
+    yield put(removeCollaboratorSuccess(response.data));
+    yield put(addNotification('Calendar has been unshared for this user!', 'success'));
+  } catch (e) {
+    console.error(e);
+    yield put(addNotification('Something went wrong while unsharing!', 'error'));
+    yield put(removeCollaboratorFailure(e.response.data));
+  }
+}
+
 const userSagas = [
   takeEvery(registerRequest, registerUserSaga),
   takeEvery(loginRequest, loginUserSaga),
   takeEvery(facebookLoginRequest, facebookLoginSaga),
   takeEvery(logoutRequest, logoutUserSaga),
+
+  takeEvery(fetchCollaboratorsRequest, fetchCollaboratorsSaga),
+  takeEvery(addCollaboratorRequest, addCollaboratorSaga),
+  takeEvery(removeCollaboratorRequest, removeCollaboratorSaga),
 ];
 
 export default userSagas;

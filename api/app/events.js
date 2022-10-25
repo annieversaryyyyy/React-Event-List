@@ -7,14 +7,28 @@ const router = express.Router();
 
 router.get('/', auth, async (req, res) => {
   try {
-    const events = await CalendarEvent.find().populate("author");
+    let events = [];
 
-    if (!events) {
-      res.status(404).send({message: 'Events not found!'});
+    const userEvents = await CalendarEvent.find({
+      author: req.user._id
+    }).populate("author")
+    events = [...events, ...userEvents];
+
+    if (req.user.collaborators) {
+      req.user.collaborators.forEach(async collaborator => {
+        const collaboratorEvents = await CalendarEvent.find({
+          author: collaborator
+        });
+        events = [...events, ...collaboratorEvents];
+      });
     }
+
+    if (!events) res.status(404).send({message: 'Events not found!'});
+
     res.send(events);
-  } catch {
-    res.sendStatus(500);
+  } catch(e) {
+    console.error(e);
+    res.sendStatus(500).send(e);
   }
 });
 
@@ -38,7 +52,9 @@ router.post('/', auth, async (req, res) => {
     const {title, datetime, duration} = req.body;
 
     if (!title || !datetime || !duration) {
-      return res.status(400).send({error: 'Data not valid'});
+      return res.status(400).send({
+        message: 'Data not valid'
+      });
     }
 
     const dateDiff = dayjs(datetime).diff(new Date(), 'day');
@@ -50,15 +66,16 @@ router.post('/', auth, async (req, res) => {
     }
 
     const calendarEvent = new CalendarEvent({
-      author: req.user._id,
       title,
       duration,
+      author: req.user._id,
       datetime: dayjs(datetime).format('MMM D, YYYY h:mm A'),
     });
 
     await calendarEvent.save();
     res.send(calendarEvent);
-  } catch (e) {
+  } catch(e) {
+    console.error(e);
     res.status(400).send(e);
   }
 });

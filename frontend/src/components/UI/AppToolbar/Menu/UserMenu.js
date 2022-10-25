@@ -5,7 +5,6 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import {logoutRequest} from "../../../../store/actions/usersActions";
-import {Avatar} from "@mui/material";
 
 const UserMenu = ({user}) => {
   const dispatch = useDispatch();
@@ -20,6 +19,7 @@ const UserMenu = ({user}) => {
     setAnchorEl(null);
   };
 
+
   return (
     <div>
       <Button
@@ -30,16 +30,9 @@ const UserMenu = ({user}) => {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        {
-          user.avatar &&
-            <Avatar
-              alt={user.displayName}
-              src={user.avatar}
-              sx={{ width: 24, height: 24, marginRight: "5px" }}
-            />
-        }
         Hello, {user.displayName}!
       </Button>
+
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}

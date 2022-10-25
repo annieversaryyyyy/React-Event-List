@@ -46,7 +46,7 @@ const UserSchema = new Schema({
         required: true,
     },
     facebookId: String,
-    avatar: String,
+    collaborators: [mongoose.Types.ObjectId],
 });
 
 UserSchema.pre('save', async function(next) {

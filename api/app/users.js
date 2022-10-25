@@ -3,8 +3,21 @@ const axios = require('axios');
 const {nanoid} = require('nanoid');
 const User = require('../models/User');
 const config = require('../config');
+const auth = require("../middleware/auth");
 
 const router = express.Router();
+
+router.get('/collaborators', auth, async (req, res) => {
+  try {
+    const collaborators = await User.find({
+      collaborators: req.user._id
+    });
+    res.send(collaborators);
+  } catch(e) {
+    console.error(e);
+    res.sendStatus(500).send(e);
+  }
+})
 
 router.post('/', async (req, res) => {
   try {
@@ -63,9 +76,10 @@ router.post('/facebookLogin', async (req, res) => {
         email: req.body.email,
         password: nanoid(),
         facebookId: req.body.id,
-        displayName: req.body.name,
+        displayName: req.body.name
       });
     }
+
 
     user.generateToken();
     await user.save({validateBeforeSave: false});
@@ -90,6 +104,67 @@ router.delete('/sessions', async (req, res) => {
   await user.save({validateBeforeSave: false});
 
   return res.send({success, user});
+});
+
+router.put('/share', auth, async (req, res) => {
+  try {
+    const {userEmail} = req.body;
+
+    if (req.user.email === userEmail) {
+      return res.status(401).send({
+        email: 'We can\'t use own email!'
+      });
+    }
+
+    const collaborator = await User.findOne({email: userEmail});
+
+    if (!collaborator) {
+      return res.status(401).send({
+        email: 'User was not found!'
+      });
+    }
+
+    if (req.user.collaborators && req.user.collaborators.includes(collaborator._id)) {
+      return res.status(401).send({
+        email: 'Already shared for this user!'
+      });
+    }
+
+    const userData = {
+      collaborators: [collaborator._id]
+    }
+
+    if (req.user.collaborators && req.user.collaborators.length) {
+      userData.collaborators = [...userData.collaborators, ...req.user.collaborators]
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, userData, { new: true })
+
+    return res.send(updatedUser);
+  } catch(e) {
+    console.error(e);
+    return res.sendStatus(500).send(e);
+  }
+});
+
+
+router.put('/unshare', auth, async (req, res) => {
+  try {
+    const collaborator = await User.findOne({ _id: req.body.collaboratorId });
+
+    if (!collaborator) {
+      res.status(404).send({message: 'Collaborator not found!'});
+    }
+
+    const updatedCollaborator = await User.findByIdAndUpdate(req.body.collaboratorId, {
+      collaborators: collaborator.collaborators.sort(item => item !== req.user._id)
+    }, {new: true});
+
+    return res.send(updatedCollaborator);
+  } catch(e) {
+    console.error(e);
+    res.sendStatus(500).send(e);
+  }
 });
 
 module.exports = router;

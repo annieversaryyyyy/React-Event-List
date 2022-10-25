@@ -8,6 +8,12 @@ export const initialState = {
   registerError: null,
   loginLoading: false,
   loginError: null,
+  fetchCollaboratorsLoading: false,
+  fetchCollaboratorsError: null,
+  addCollaboratorLoading: false,
+  addCollaboratorError: null,
+  removeCollaboratorLoading: false,
+  removeCollaboratorError: null,
 };
 
 const usersSlice = createSlice({
@@ -41,9 +47,42 @@ const usersSlice = createSlice({
     logoutRequest(state) {
       state.user = null;
     },
-    facebookLoginRequest(state) {
-      console.log(state);
-    }
+    facebookLoginRequest() {},
+    fetchCollaboratorsRequest(state) {
+      state.fetchCollaboratorsLoading = true;
+      state.fetchCollaboratorsError = null;
+    },
+    fetchCollaboratorsSuccess(state, action) {
+      state.fetchCollaboratorsLoading = false
+      state.collaborators = action.payload;
+    },
+    fetchCollaboratorsFailure(state, action) {
+      state.fetchCollaboratorsLoading = false;
+      state.fetchCollaboratorsError = action.payload;
+    },
+    addCollaboratorRequest(state) {
+      state.addCollaboratorLoading = true;
+      state.addCollaboratorError = null;
+    },
+    addCollaboratorSuccess(state) {
+      state.addCollaboratorLoading = false;
+    },
+    addCollaboratorFailure(state, action) {
+      state.addCollaboratorLoading = false;
+      state.addCollaboratorError = action.payload;
+    },
+    removeCollaboratorRequest(state) {
+      state.removeCollaboratorLoading = true;
+      state.removeCollaboratorError = null;
+    },
+    removeCollaboratorSuccess(state, {payload: deletedCollaborator}) {
+      state.removeCollaboratorLoading = false;
+      state.collaborators = state.collaborators.filter(item => item._id !== deletedCollaborator._id);
+    },
+    removeCollaboratorFailure(state, action) {
+      state.removeCollaboratorLoading = false;
+      state.removeCollaboratorError = action.payload;
+    },
   }
 });
 

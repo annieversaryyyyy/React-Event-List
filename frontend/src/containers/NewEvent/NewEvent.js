@@ -34,7 +34,7 @@ const NewEvent = () => {
 
   const getFieldError = fieldName => {
     try {
-      return error.errors[fieldName].message;
+      return error[fieldName];
     } catch {
       return undefined;
     }
