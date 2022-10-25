@@ -8,19 +8,20 @@ const router = express.Router();
 router.get('/', auth, async (req, res) => {
   try {
     let events = [];
+    const collaborators = req.user.collaborators;
 
     const userEvents = await CalendarEvent.find({
       author: req.user._id
     }).populate("author")
     events = [...events, ...userEvents];
 
-    if (req.user.collaborators) {
-      req.user.collaborators.forEach(async collaborator => {
+    if (collaborators && collaborators.length) {
+      for (const collaboratorId of collaborators) {
         const collaboratorEvents = await CalendarEvent.find({
-          author: collaborator
+          author: collaboratorId
         });
         events = [...events, ...collaboratorEvents];
-      });
+      }
     }
 
     if (!events) res.status(404).send({message: 'Events not found!'});
@@ -69,7 +70,7 @@ router.post('/', auth, async (req, res) => {
       title,
       duration,
       author: req.user._id,
-      datetime: dayjs(datetime).format('MMM D, YYYY h:mm A'),
+      datetime
     });
 
     await calendarEvent.save();

@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {deleteRequest,fetchRequest} from '../../store/actions/eventsActions';
 import './Dashboard.css';
 import Spinner from "../../components/Spinner/Spinner";
+import dayjs from "dayjs";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const Dashboard = () => {
                     <li key={item._id} className='card'>
                     <div className='eventCard'>
                         <p>Title: {item.title}</p>
-                        <p>Date: {item.datetime}</p>
+                        <p>Date: {dayjs(item.datetime).format('MMM D, YYYY h:mm A')}</p>
                         <p>Duration: {item.duration}h</p>
                        <div className='btn'>
                            {user._id === item.author._id ?
