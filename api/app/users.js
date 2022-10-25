@@ -9,15 +9,24 @@ const router = express.Router();
 
 router.get('/collaborators', auth, async (req, res) => {
   try {
-    const collaborators = await User.find({
-      collaborators: req.user._id
-    });
-    res.send(collaborators);
+    const items = [];
+    const collaboratorsIds = req.user.collaborators;
+
+    if (!collaboratorsIds && !collaboratorsIds.length) {
+      return res.status(401).send({message: 'User dont have collaborators!'});
+    }
+
+    for (const itemId of collaboratorsIds) {
+      const collaborator = await User.findById(itemId);
+      items.push(collaborator);
+    }
+
+    res.send(items);
   } catch(e) {
     console.error(e);
     res.sendStatus(500).send(e);
   }
-})
+});
 
 router.post('/', async (req, res) => {
   try {

@@ -3,11 +3,13 @@ import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteRequest,fetchRequest} from '../../store/actions/eventsActions';
 import './Dashboard.css';
+import Spinner from "../../components/Spinner/Spinner";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
     const events = useSelector(state => state.events.events);
     const user = useSelector(state => state.users.user);
+    const  fetchLoading = useSelector(state => state.events.fetchLoading);
 
 
     useEffect(() => {
@@ -32,6 +34,7 @@ const Dashboard = () => {
                </div>
            </div>
 
+            {fetchLoading ? <Spinner/> : (
             <ul className='dashboardEvents'>
                 {events.map(item => (
                     <li key={item._id} className='card'>
@@ -40,7 +43,8 @@ const Dashboard = () => {
                         <p>Date: {item.datetime}</p>
                         <p>Duration: {item.duration}h</p>
                        <div className='btn'>
-                           {user._id === item.author._id ? <>
+                           {user._id === item.author._id ?
+                               <>
                                    <button onClick={() => deletePost(item._id)}>Delete</button>
                                    <Link to={`/edit-event/${item._id}`}>Edit event</Link>
                                </>
@@ -51,6 +55,7 @@ const Dashboard = () => {
                     </li>
                 ))}
             </ul>
+            )}
 
         </main>
     );

@@ -24,12 +24,12 @@ const EditEvent = ({match, history}) => {
 
     const updateEvent = eventData => {
         dispatch(updateEventRequest({_id: match.params.id, ...eventData}));
-    }
+    };
 
     if (fetchEventError) history.push('/');
 
     return (
-        fetchEventLoading ? <Spinner>Loading...</Spinner>
+        fetchEventLoading ? <Spinner/>
             :
             <main className='edit-event'>
                 <Container maxWidth="xs">

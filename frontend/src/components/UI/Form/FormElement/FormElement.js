@@ -24,7 +24,7 @@ FormElement.propTypes = {
   name: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   error: PropTypes.string,
   type: PropTypes.string,
   required: PropTypes.bool,

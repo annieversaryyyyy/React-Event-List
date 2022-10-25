@@ -7,6 +7,7 @@ import {
   fetchCollaboratorsRequest,
   removeCollaboratorRequest,
 } from '../../store/actions/usersActions';
+import Spinner from "../../components/Spinner/Spinner";
 
 const Collaborators = () => {
   const dispatch = useDispatch();
@@ -20,7 +21,8 @@ const Collaborators = () => {
 
   const removeCollaborator = collaboratorId => {
     dispatch(removeCollaboratorRequest(collaboratorId));
-  }
+  };
+
 
   return (
       <main className="collaborators-list">
@@ -29,7 +31,7 @@ const Collaborators = () => {
             Who can view my calendar:
           </Typography>
 
-          {fetchCollaboratorsLoading ? <div>Loading...</div> : (
+          {fetchCollaboratorsLoading ? <Spinner/> : (
               <ul>
                 {collaborators && collaborators.map(item => (
                     <li key={item._id}>
