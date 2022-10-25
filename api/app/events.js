@@ -12,14 +12,14 @@ router.get('/', auth, async (req, res) => {
 
     const userEvents = await CalendarEvent.find({
       author: req.user._id
-    }).populate("author")
+    }).populate("author").sort({datetime: 1});
     events = [...events, ...userEvents];
 
     if (collaborators && collaborators.length) {
       for (const collaboratorId of collaborators) {
         const collaboratorEvents = await CalendarEvent.find({
           author: collaboratorId
-        });
+        }).sort({datetime: 1});
         events = [...events, ...collaboratorEvents];
       }
     }

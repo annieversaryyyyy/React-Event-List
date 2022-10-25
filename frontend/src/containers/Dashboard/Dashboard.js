@@ -39,6 +39,11 @@ const Dashboard = () => {
             <ul className='dashboardEvents'>
                 {events.map(item => (
                     <li key={item._id} className='card'>
+                        {user._id !== item.author._id ?
+                            <>
+                            <p>Collaborator Event</p>
+                            </>
+                            : null}
                     <div className='eventCard'>
                         <p>Title: {item.title}</p>
                         <p>Date: {dayjs(item.datetime).format('MMM D, YYYY h:mm A')}</p>
